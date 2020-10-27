@@ -1,0 +1,97 @@
+#response {
+	display: none;
+}
+#sortable {
+	margin: 0;
+	padding: 0;
+}
+#sortable li {
+	margin: 0;
+	padding: 0;
+	border: 1px solid #DFDFDF;
+	border-top: none;
+	position: relative;
+	background: #fcfcfc;
+}
+#sortable li.stripe {
+	background: #FFF;
+}
+#sortable li img {
+	padding: 10px;
+}
+#sorthead, #sortfoot {
+	background-color: #F1F1F1;
+	background-image: -ms-linear-gradient(top,#f9f9f9,#ececec);
+	background-image: -moz-linear-gradient(top,#f9f9f9,#ececec);
+	background-image: -o-linear-gradient(top,#f9f9f9,#ececec);
+	background-image: -webkit-gradient(linear,left top,left bottom,from(#f9f9f9),to(#ececec));
+	background-image: -webkit-linear-gradient(top,#f9f9f9,#ececec);
+	background-image: linear-gradient(top,#f9f9f9,#ececec);
+	border: 1px solid #DFDFDF;
+}
+#sortable input {
+	display: inline;
+	margin: 30px 35px 0 0;
+	padding: 0;
+	float: right;
+}
+#sortable form.delete {
+	width: 100px;
+	position: absolute;
+	right: 20px;
+	top: 5px;
+}
+#sortable form.url {
+	width: 300px;
+	position: absolute;
+	left: 280px;
+	top: 35px;
+}
+#sortable form.url input {
+	padding: 1px 3px;
+}
+#sortable form.url input {
+	margin: 0 5px;
+	float: none;
+}
+#sorthead {
+	-moz-border-radius-topright: 5px;
+	-moz-border-radius-topleft: 5px;
+	-webkit-border-top-right-radius: 5px;
+	-webkit-border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	border-top-left-radius: 5px;
+}
+#sortfoot {
+	-moz-border-radius-bottomright: 5px;
+	-moz-border-radius-bottomleft: 5px;
+	-webkit-border-bottom-right-radius: 5px;
+	-webkit-border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+	border-top: none;
+}
+#hybrid-slideshow-upload {
+	margin-bottom: 40px;
+}
+#sorthead table, #sortfoot table {
+	width: 100%;
+}
+#sorthead td, #sortfoot td {
+	width: 40%;
+	padding: 5px 0 5px 20px;
+}
+#sorthead td.right, #sortfoot td.right {
+	text-align: right;
+	padding: 5px 45px 5px 0;
+}
+#sorthead td span, #sortfoot td span {
+	padding-left: 50px;
+}
+#sorthead td span.url-title, #sortfoot td span.url-title {
+	padding-left: 135px;
+}
+img.handle {
+	cursor: move;
+	margin: 0 0 10px 30px;
+}
