@@ -40,12 +40,13 @@
 	position: absolute;
 	right: 20px;
 	top: 5px;
+	text-align: center;
 }
 #sortable form.url {
 	width: 300px;
 	position: absolute;
 	left: 280px;
-	top: 35px;
+	top: 25px;
 }
 #sortable form.url input {
 	padding: 1px 3px;
@@ -91,7 +92,25 @@
 #sorthead td span.url-title, #sortfoot td span.url-title {
 	padding-left: 135px;
 }
-img.handle {
+span.handle {
 	cursor: move;
 	margin: 0 0 10px 30px;
+	position: relative;
+	top: -35px;
+	font-size: 20px;
+}
+button.trash {
+	margin: 20px auto 0;
+	background: transparent;
+	border: none;
+	border-radius: 0;
+	font-size: 20px;
+	cursor: pointer;
+}
+.svg-icon {
+    width: 1em; 
+    height: 1em;
+    vertical-align: -0.15em;
+    fill: currentColor;
+    overflow: hidden;
 }

@@ -273,7 +273,7 @@ function hybrid_slideshow_images_page() {
 	
 		<form action="" method="post" enctype="multipart/form-data" id="hybrid-slideshow-upload">
 			<?php if(function_exists('wp_nonce_field')) { wp_nonce_field('hybrid_upload_nonce'); } ?>
-			<input type="hidden" name="MAX_FILE_SIZE" value="524288">
+			<input type="hidden" name="MAX_FILE_SIZE" value="1000000">
 			<input type="file" name="uploaded_file" />
 			<input type="hidden" name="submitted" value="true" />
 			<input type="hidden" name="action" id="action" value="wp_handle_upload" />
@@ -305,13 +305,27 @@ function hybrid_slideshow_images_page() {
 					$upload_dir = wp_upload_dir();
 					echo '<li id="listItem_' . $i . ' class=">';
 					echo '<img src="' . $upload_dir['baseurl'] . '/' . $base . '-thumb' . $extension . '" />';
-					echo '<img src="' . WP_PLUGIN_URL . '/hybrid-slideshow/images/move.png" width="30" height="30" alt="move" title="" class="handle" />';
+
+					ob_start();
+					include( plugin_dir_path( __FILE__ ) . 'svg/move.svg' );
+					$icon = ob_get_contents();
+					ob_end_clean();
+					echo '<span class="handle">' . $icon . '</span>';
+
 					echo '<form action="" method="post" class="url">'; 
 					if(function_exists('wp_nonce_field')) { wp_nonce_field('hybrid_url_nonce'); } 
 					echo '<input type="text" name="url" value="' . $image_array['url'] . '" /><input type="hidden" name="submitted" value="true" /><input type="hidden" name="add_url" value="' . $i . '" class="add-url" /><input type="submit" name="submit" value="Save" class="url-btn" /></form>';
 					echo '<form action="" method="post" class="delete">'; 
+
+					ob_start();
+					include( plugin_dir_path( __FILE__ ) . 'svg/trash.svg' );
+					$icon = ob_get_contents();
+					ob_end_clean();
+
+					echo '<form action="" method="post" class="delete">'; 
 					if(function_exists('wp_nonce_field')) { wp_nonce_field('hybrid_delete_nonce'); }
-					echo '<input type="hidden" name="submitted" value="true" /><input type="hidden" name="delete" value="' . $i . '" class="hidden delete-img" /><input type="image" src="' . WP_PLUGIN_URL . '/hybrid-slideshow/images/delete.png" /></form>';
+					echo '<input type="hidden" name="submitted" value="true" /><input type="hidden" name="delete" value="' . $i . '" class="hidden delete-img" /><button class="trash">' . $icon . '</button></form>';
+
 					echo '</li>';
 					$i++;
 				}
