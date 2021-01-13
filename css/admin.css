@@ -18,6 +18,9 @@
 }
 #sortable li img {
 	padding: 10px;
+	width: 70px;
+	height: auto;
+	max-width: 100%;
 }
 #sorthead, #sortfoot {
 	background-color: #F1F1F1;
@@ -92,6 +95,10 @@
 #sorthead td span.url-title, #sortfoot td span.url-title {
 	padding-left: 135px;
 }
+#sortable .slideshow-holder {
+	padding: 30px;
+	text-align: center;
+}
 span.handle {
 	cursor: move;
 	margin: 0 0 10px 30px;
@@ -113,4 +120,7 @@ button.trash {
     vertical-align: -0.15em;
     fill: currentColor;
     overflow: hidden;
+}
+#upload_image_button {
+	margin-bottom: 30px;
 }
