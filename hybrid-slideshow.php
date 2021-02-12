@@ -621,17 +621,20 @@ function hybrid_slideshow_delete_image( $img, $update = false ) {
 
 	if ( file_exists( $new_path ) ) wp_delete_file( $new_path );
 
-	// Retrieve current images from options database table
-	$current_images = get_option( 'hybrid-slideshow-option-images' );
+	// Delete the image from the slideshow array, if it isn't a dimension update
+	if ( !$update ) {
+		// Retrieve current images from options database table
+		$current_images = get_option( 'hybrid-slideshow-option-images' );
 
-	foreach ( $current_images as $key => $value ) {
-		if ( intval( $value[ 'image' ] ) === intval( $img ) ) {
-			unset( $current_images[ $key ] );
+		foreach ( $current_images as $key => $value ) {
+			if ( intval( $value[ 'image' ] ) === intval( $img ) ) {
+				unset( $current_images[ $key ] );
+			}
 		}
+		
+		$current_images = array_values( $current_images );
+		update_option( 'hybrid-slideshow-option-images', $current_images );
 	}
-	
-	$current_images = array_values( $current_images );
-	update_option( 'hybrid-slideshow-option-images', $current_images );
 }
 
 function hybrid_add_image() {
