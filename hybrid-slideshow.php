@@ -4,7 +4,7 @@ Plugin Name: Hybrid Slideshow
 Plugin URI: http://www.hybridvigordesign.com/uncategorized/hybrid-slideshow
 Description:  A simple jquery powered slideshow with drag and drop image ordering.
 Author: David LaTour
-Version: 2.0.0
+Version: 2.0.1
 Author URI: http://www.hybridvigordesign.com
 
 Copyright 2010 by David LaTour
