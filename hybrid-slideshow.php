@@ -35,7 +35,7 @@ add_action( 'get_header', 'hybrid_slideshow_front_scripts' );
 add_shortcode( 'hybrid_slideshow', 'hybrid_slideshow' );
 add_action( 'widgets_init', 'hybrid_slideshow_register_widgets' );
 add_action( 'wp_head', 'hybrid_slideshow_header_output' );
-add_action( 'init', 'update_database_structure' );
+add_action( 'plugins_loaded', 'update_database_structure' );
 add_action( 'delete_attachment', 'hybrid_slideshow_delete_image', 10, 1 );
 add_filter( 'pre_update_option_hybrid-slideshow-option-width', 'hybrid_slideshow_update_width', 10, 3 );
 add_filter( 'pre_update_option_hybrid-slideshow-option-height', 'hybrid_slideshow_update_height', 11, 3 );
@@ -72,7 +72,58 @@ function update_database_structure() {
 				delete_option( 'hybrid-slideshow-option-images' );
 				update_option( 'hybrid-slideshow-option-images', $new_order );
 			}
-		} 
+
+		} elseif ( !is_numeric( $current_images[ 0 ][ 'image' ] ) ) {
+
+			$new_order = array();
+			$upload_dir = wp_upload_dir()[ 'basedir' ]; 
+			$slideshow_width = get_option( 'hybrid-slideshow-option-width' );
+			$slideshow_height = get_option( 'hybrid-slideshow-option-height' );
+			$dimension_string = '-' . $slideshow_width . 'x' . $slideshow_height;
+
+			foreach ( $current_images as $image ) {
+				
+				$path = $upload_dir . $image[ 'image' ];
+				$fullsize_path = str_replace( $dimension_string, '', $path );
+
+				copy( $path, $fullsize_path );
+
+				$filetype = wp_check_filetype( basename( $path ), null )[ 'type' ];
+				$title = preg_replace( '/\.[^.]+$/', '', basename( $path ) );
+				$title = substr( $title, 0, strrpos( $title, '-' ) );
+
+				$attachment = array(
+					'guid'           => $fullsize_path, 
+					'post_mime_type' => $filetype,
+					'post_title'     => $title,
+					'post_content'   => '',
+					'post_status'    => 'inherit'
+				);
+
+				$attach_id = wp_insert_attachment( $attachment, $fullsize_path, 0 );
+
+				require_once( ABSPATH . 'wp-admin/includes/image.php' );
+				$attach_data = wp_generate_attachment_metadata( $attach_id, $fullsize_path );
+				wp_update_attachment_metadata( $attach_id, $attach_data );
+				
+				$new_order[] = array(
+					'image' => $attach_id,
+					'url' => $image[ 'url' ]
+				);
+
+				$ext = '.' . wp_check_filetype( $path )[ 'ext' ];
+				$thumb_path = str_replace( $ext, '-thumb' . $ext, $path );
+		
+				if ( file_exists( $thumb_path ) ) wp_delete_file( $thumb_path );
+				
+			}
+
+			hybrid_slideshow_update_images( $new_order, $slideshow_width, $slideshow_height );
+
+			delete_option( 'hybrid-slideshow-option-images' );
+			update_option( 'hybrid-slideshow-option-images', $new_order );
+		}
+		
 	}
 }
 
@@ -262,7 +313,12 @@ function hybrid_slideshow_images_page() {
 			check_admin_referer( 'hybrid_delete_nonce' );
 			$image_id = $_POST[ 'delete' ];
 			$current_images = get_option( 'hybrid-slideshow-option-images' );
-			wp_delete_attachment( $current_images[ $image_id ][ 'image' ] );
+			
+			// delete as long as isn't registered image size from elsewhere
+			if ( !hybrid_slideshow_check_existing_size() ) {
+				hybrid_slideshow_delete_image( $current_images[ $image_id ][ 'image' ] );
+			}
+
 			if ( $current_images ) {
 				unset( $current_images[ $image_id ] );
 				$current_images = array_values( $current_images );
@@ -295,10 +351,7 @@ function hybrid_slideshow_images_page() {
 		<input id="upload_image_button" type="button" class="button-primary" value="Select Image" />
 		
 		<h3>Manage Images</h3>
-			
-		<?php
-		$current_images = get_option( 'hybrid-slideshow-option-images' );
-		?>
+		
 		<div id="sorthead">
 			<table>
 				<tr>
@@ -357,6 +410,22 @@ function hybrid_slideshow_images_page() {
 		</div>
 	</div><!-- end .wrap -->
 	<?php
+}
+
+// Check if there's a custom image size registered with same dimensions as slideshow size
+function hybrid_slideshow_check_existing_size() {
+	global $_wp_additional_image_sizes; 
+
+	$hybrid_slideshow_width = get_option( 'hybrid-slideshow-option-width' );
+	$hybrid_slideshow_height = get_option( 'hybrid-slideshow-option-height' );
+
+	foreach ( $_wp_additional_image_sizes as $img_size ) {
+		if ( $img_size[ 'width' ] == $hybrid_slideshow_width &&
+			$img_size[ 'height' ] == $hybrid_slideshow_height &&
+			$img_size[ 'crop' ] == 1 ) return true;
+	}
+
+	return false;
 }
 
 // This function handles all of the image processing
