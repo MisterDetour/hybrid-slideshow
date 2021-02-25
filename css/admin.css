@@ -18,7 +18,8 @@
 }
 #sortable li img {
 	padding: 10px;
-	width: 70px;
+	width: 70px !important;
+	max-width: 70px !important;
 	height: auto;
 	max-width: 100%;
 }

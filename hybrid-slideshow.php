@@ -217,7 +217,7 @@ function hybrid_slideshow_action_callback() {
 // css & js output for admin head
 function hybrid_slideshow_action_header() {
 	?>
-	<link href="<?php echo HYBRID_SLIDESHOW_URL; ?>css/admin.css?v=1.0000003" rel="stylesheet" type="text/css" />
+	<link href="<?php echo HYBRID_SLIDESHOW_URL; ?>css/admin.css?v=1.0000004" rel="stylesheet" type="text/css" />
 
 	<script type="text/javascript">
 		jQuery( document ).ready( function( $ ) {
