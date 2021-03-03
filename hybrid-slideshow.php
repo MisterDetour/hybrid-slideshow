@@ -7,7 +7,7 @@ Author: David LaTour
 Version: 2.0.2
 Author URI: http://www.hybridvigordesign.com
 
-Copyright 2010 by David LaTour
+Copyright 2010 - by David LaTour
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ register_activation_hook( __FILE__, 'hybrid_slideshow_activate' );
 add_action( 'admin_menu', 'hybrid_slideshow_create_menu' );
 add_action( 'admin_head', 'hybrid_slideshow_action_header' );
 add_action( 'wp_ajax_hybrid_special_action', 'hybrid_slideshow_action_callback' );
+add_action( 'wp_ajax_hybrid_delete_action', 'hybrid_slideshow_delete_action_callback' );
 add_action( 'wp_ajax_hybrid_add_image', 'hybrid_add_image' );
 add_action( 'admin_print_scripts', 'hybrid_slideshow_admin_scripts' );
 add_action( 'get_header', 'hybrid_slideshow_front_scripts' );
@@ -158,7 +159,16 @@ function hybrid_slideshow_admin_scripts() {
 	wp_enqueue_script( 'jquery-ui-sortable' );
 	wp_enqueue_media();
 	wp_register_script( 'media-uploader', plugins_url( 'js/media-uploader.js' , __FILE__ ), array( 'jquery' ) );
+	wp_register_script( 'hybrid-custom', plugins_url( 'js/custom.js' , __FILE__ ), array( 'jquery' ) );
 
+	$params = array( 
+		'ajax_url' => admin_url( 'admin-ajax.php' ),
+		'delete_nonce' => wp_create_nonce( 'hybrid_delete_nonce' )
+	);
+
+	wp_localize_script( 'hybrid-custom', 'ajax_object', $params ); 
+    wp_enqueue_script( 'hybrid-custom' );
+	
 	$params = array( 
 		'ajax_url' => admin_url( 'admin-ajax.php' ),
 		'delete_nonce' => wp_create_nonce( 'hybrid_delete_nonce' ),
@@ -212,6 +222,26 @@ function hybrid_slideshow_action_callback() {
 	</script>	
 	<?php
 	die(true);
+}
+
+function hybrid_slideshow_delete_action_callback() {
+	if ( ! wp_verify_nonce( $_POST[ 'nonce'] , 'hybrid_delete_nonce' ) ) wp_die( 'nonce didn\'t verify' );
+
+	$image_id = $_POST[ 'id' ];
+	$current_images = get_option( 'hybrid-slideshow-option-images' );
+	
+	// delete as long as isn't registered image size from elsewhere
+	if ( !hybrid_slideshow_check_existing_size() ) {
+		hybrid_slideshow_delete_image( $current_images[ $image_id ][ 'image' ] );
+	}
+
+	if ( $current_images ) {
+		unset( $current_images[ $image_id ] );
+		$current_images = array_values( $current_images );
+		update_option( 'hybrid-slideshow-option-images', $current_images );
+	}
+	
+	wp_die();
 }
 
 // css & js output for admin head
