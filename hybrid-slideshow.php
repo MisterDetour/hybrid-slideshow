@@ -4,7 +4,7 @@ Plugin Name: Hybrid Slideshow
 Plugin URI: http://www.hybridvigordesign.com/uncategorized/hybrid-slideshow
 Description:  A simple jquery powered slideshow with drag and drop image ordering.
 Author: David LaTour
-Version: 2.0.2
+Version: 2.1.0
 Author URI: http://www.hybridvigordesign.com
 
 Copyright 2010 - by David LaTour
@@ -30,6 +30,7 @@ add_action( 'admin_menu', 'hybrid_slideshow_create_menu' );
 add_action( 'admin_head', 'hybrid_slideshow_action_header' );
 add_action( 'wp_ajax_hybrid_special_action', 'hybrid_slideshow_action_callback' );
 add_action( 'wp_ajax_hybrid_delete_action', 'hybrid_slideshow_delete_action_callback' );
+add_action( 'wp_ajax_hybrid_url_action', 'hybrid_slideshow_url_action_callback' );
 add_action( 'wp_ajax_hybrid_add_image', 'hybrid_add_image' );
 add_action( 'admin_print_scripts', 'hybrid_slideshow_admin_scripts' );
 add_action( 'get_header', 'hybrid_slideshow_front_scripts' );
@@ -158,12 +159,13 @@ function hybrid_slideshow_admin_scripts() {
 	wp_enqueue_script( 'jquery-ui-core' );
 	wp_enqueue_script( 'jquery-ui-sortable' );
 	wp_enqueue_media();
-	wp_register_script( 'media-uploader', plugins_url( 'js/media-uploader.js' , __FILE__ ), array( 'jquery' ) );
-	wp_register_script( 'hybrid-custom', plugins_url( 'js/custom.js' , __FILE__ ), array( 'jquery' ) );
+	wp_register_script( 'media-uploader', plugins_url( 'js/media-uploader.js' , __FILE__ ), array( 'jquery' ), '1.00000000001' );
+	wp_register_script( 'hybrid-custom', plugins_url( 'js/custom.js' , __FILE__ ), array( 'jquery' ), '1.0000000000001' );
 
 	$params = array( 
 		'ajax_url' => admin_url( 'admin-ajax.php' ),
-		'delete_nonce' => wp_create_nonce( 'hybrid_delete_nonce' )
+		'delete_nonce' => wp_create_nonce( 'hybrid_delete_nonce' ), 
+		'url_nonce' => wp_create_nonce( 'hybrid_url_nonce' )
 	);
 
 	wp_localize_script( 'hybrid-custom', 'ajax_object', $params ); 
@@ -179,53 +181,28 @@ function hybrid_slideshow_admin_scripts() {
     wp_enqueue_script( 'media-uploader' );
 }
 
-// Strips text from li id's leaving us with integer
-function strip_text( &$value, $key ) {
-	$value = str_replace( 'listItem_', '', $value );
-}
-
 // Ajax processing function
 function hybrid_slideshow_action_callback() {
-	// Call function which will strip text from li id's and assign to array
-	array_walk( $_POST[ 'order' ], 'strip_text' );
+
 	$order_array = $_POST[ 'order' ];
-	
+
 	// Retrieve current images from options database table
 	$current_images = get_option( 'hybrid-slideshow-option-images' );	
 
 	// Build new array with images in updated order
 	$new_order = array();
 
-	foreach ( $order_array as $order ) {
-		foreach ( $current_images as $key => $value ) {
-			if ( $order == $key ) {
-				$new_order[] = $value;
-			}
-		}
+	foreach ( $order_array as $img ) {
+		$new_order[] = array( 'image' => $img[ 0 ], 'url' => $img[ 1 ] );	
 	}
 
 	update_option( 'hybrid-slideshow-option-images', $new_order );
 
-	// Reset list item id's
-	?>
-	<script type="text/javascript" >
-		jQuery( document ).ready( function( $ ) {
-			var i = 0
-			jQuery( '#sortable li' ).each( function() {
-				var name = 'listItem_' + i;
-				$( this ).attr( 'id', name );
-				$( this ).children( 'form.url' ).children( 'input.add-url' ).val( i );
-				$( this ).children( 'form.delete' ).children( 'input.delete-img' ).val( i );
-				i++;
-			});
-		});
-	</script>	
-	<?php
-	die(true);
+	wp_die( 1 );
 }
 
 function hybrid_slideshow_delete_action_callback() {
-	if ( ! wp_verify_nonce( $_POST[ 'nonce'] , 'hybrid_delete_nonce' ) ) wp_die( 'nonce didn\'t verify' );
+	if ( ! wp_verify_nonce( $_POST[ 'nonce'] , 'hybrid_delete_nonce' ) ) wp_die( 0 );
 
 	$image_id = $_POST[ 'id' ];
 	$current_images = get_option( 'hybrid-slideshow-option-images' );
@@ -241,6 +218,19 @@ function hybrid_slideshow_delete_action_callback() {
 		update_option( 'hybrid-slideshow-option-images', $current_images );
 	}
 	
+	wp_die( 1 );
+}
+
+function hybrid_slideshow_url_action_callback() {
+	if ( ! wp_verify_nonce( $_POST[ 'nonce'] , 'hybrid_url_nonce' ) ) wp_die( 'nonce didn\'t verify' );
+
+	$image_id = $_POST[ 'id' ];
+	$current_images = get_option( 'hybrid-slideshow-option-images' );
+
+	$current_images[ $image_id ][ 'url' ] = esc_url( $_POST[ 'url' ] );
+
+	update_option( 'hybrid-slideshow-option-images', $current_images );
+
 	wp_die();
 }
 
@@ -258,14 +248,23 @@ function hybrid_slideshow_action_header() {
 					jQuery( '#sortable li' ).removeClass( 'stripe' );
 					jQuery( '#sortable li:odd' ).addClass( 'stripe' );
 					var order = $( '#sortable' ).sortable( 'toArray' );
-	
+
+					var urls = $( '#sortable li input.url' ).map( function () {
+						return this.value; 
+					} ).get();
+
+					// Strip strings from list item ids
+					for ( var i = 0; i < order.length; i++ ) {
+						order[ i ] = [ order[ i ].replace( 'listItem_', '' ), urls[ i ]  ];
+					}
+
 					var data = {
 						action: 'hybrid_special_action',
 						order: order
 					};
 
 					jQuery.post( ajaxurl, data, function( response ) {
-						//console.log( 'Got this from the server: ' + response );
+						console.log( response );
 					});
 				}
 			} );
@@ -381,7 +380,7 @@ function hybrid_slideshow_images_page() {
 		<input id="upload_image_button" type="button" class="button-primary" value="Select Image" />
 		
 		<h3>Manage Images</h3>
-		
+
 		<div id="sorthead">
 			<table>
 				<tr>
@@ -401,7 +400,7 @@ function hybrid_slideshow_images_page() {
 					$length = strlen( $extension );
 					$base = substr( $image_array[ 'image' ], 0, -( $length ) );
 					$upload_dir = wp_upload_dir();
-					echo '<li id="listItem_' . $i . '" class="">';
+					echo '<li id="listItem_' . $image_array[ 'image' ] . '" class="">';
 					echo wp_get_attachment_image( $image_array[ 'image' ], 'thumbnail' );
 
 					ob_start();
@@ -412,7 +411,7 @@ function hybrid_slideshow_images_page() {
 
 					echo '<form action="" method="post" class="url">'; 
 					if ( function_exists( 'wp_nonce_field' ) ) { wp_nonce_field( 'hybrid_url_nonce' ); } 
-					echo '<input type="text" name="url" value="' . $image_array[ 'url' ] . '" /><input type="hidden" name="submitted" value="true" /><input type="hidden" name="add_url" value="' . $i . '" class="add-url" /><input type="submit" name="submit" value="Save" class="url-btn" /></form>';
+					echo '<input type="text" name="url" value="' . $image_array[ 'url' ] . '" class="url" /><input type="hidden" name="submitted" value="true" /><input type="hidden" name="add_url" value="' . $i . '" class="add-url" /><input type="submit" name="submit" value="Save" class="url-btn" /></form>';
 					echo '<form action="" method="post" class="delete">'; 
 
 					ob_start();
@@ -695,7 +694,12 @@ function hybrid_add_image() {
 		$image->save( $new_path );
 	}
 
-	echo json_encode( array( 'img' => wp_get_attachment_image( $img, 'thumbnail' ) ) );
+	$img_data = array( 
+		'img' => wp_get_attachment_image( $img, 'thumbnail' ), 
+		'id' => $img
+	);
+
+	echo json_encode( $img_data );
 	wp_die();
 }
 

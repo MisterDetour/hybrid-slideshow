@@ -1,6 +1,7 @@
 jQuery( document ).ready( function( $ ) {
 
-	$( '.trash' ).on( 'click', function( e ) {
+	// Delete slide
+	$( '#sortable'  ).on( 'click', '.trash', function( e ) {
 		e.preventDefault();
 
 		var imgId = $( this ).parent().parent().index();
@@ -12,8 +13,28 @@ jQuery( document ).ready( function( $ ) {
 		};
 
 		jQuery.post( ajax_object.ajax_url, data, function( response ) {
-			// TODO: need to check nonce! https://wordpress.stackexchange.com/questions/231797/what-is-nonce-and-how-to-use-it-with-ajax-in-wordpress
-			$( '#sortable li' ).eq( imgId ).remove();
+			if ( response == 1 ) {
+				$( '#sortable li' ).eq( imgId ).remove();
+			}
+		});
+	} );
+
+	// Update slide link
+	$( '#sortable' ).on( 'click', '.url-btn', function( e ) {
+		e.preventDefault();
+
+		var imgId = $( this ).parent().parent().index();
+		var url = $( this ).parent().children( '.url' ).val();
+
+		var data = {
+			action: 'hybrid_url_action',
+			id: imgId,
+			nonce: ajax_object.url_nonce, 
+			url: url
+		};
+
+		jQuery.post( ajax_object.ajax_url, data, function( response ) {
+			//console.log(response);
 		});
 	} );
 
