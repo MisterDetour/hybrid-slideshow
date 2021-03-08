@@ -85,7 +85,7 @@ jQuery( document ).ready( function( $ ) {
 
 				var urlNonce = '<input type="hidden" id="_wpnonce" name="_wpnonce" value="' + ajax_object.url_nonce + '">';
 				
-				var urlForm = '<form action="" method="post" class="url"><input type="text" name="url" value="" class="url" /><input type="hidden" name="submitted" value="true" />' + urlNonce + '<input type="hidden" name="add_url" value="' + count + '" class="add-url" /><input type="submit" name="submit" value="Save" class="url-btn" /></form>';
+				var urlForm = '<form action="" method="post" class="url"><input type="text" name="url" value="" class="url" /><input type="hidden" name="submitted" value="true" />' + urlNonce + '<input type="hidden" name="add_url" value="' + count + '" class="add-url" /></form>';
 
 				$( '#sortable' ).append( '<li id="listItem_' + imgData.id + '">' + imgData.img + '<span class="handle ui-sortable-handle">' + icon + '</span>' + urlForm + deleteForm + '</li>' );
 

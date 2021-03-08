@@ -160,7 +160,7 @@ function hybrid_slideshow_admin_scripts() {
 	wp_enqueue_script( 'jquery-ui-sortable' );
 	wp_enqueue_media();
 	wp_register_script( 'media-uploader', plugins_url( 'js/media-uploader.js' , __FILE__ ), array( 'jquery' ), '1.00000000001' );
-	wp_register_script( 'hybrid-custom', plugins_url( 'js/custom.js' , __FILE__ ), array( 'jquery' ), '1.0000000000001' );
+	wp_register_script( 'hybrid-custom', plugins_url( 'js/custom.js' , __FILE__ ), array( 'jquery' ), '1.0000000000003' );
 
 	$params = array( 
 		'ajax_url' => admin_url( 'admin-ajax.php' ),
@@ -411,7 +411,7 @@ function hybrid_slideshow_images_page() {
 
 					echo '<form action="" method="post" class="url">'; 
 					if ( function_exists( 'wp_nonce_field' ) ) { wp_nonce_field( 'hybrid_url_nonce' ); } 
-					echo '<input type="text" name="url" value="' . $image_array[ 'url' ] . '" class="url" /><input type="hidden" name="submitted" value="true" /><input type="hidden" name="add_url" value="' . $i . '" class="add-url" /><input type="submit" name="submit" value="Save" class="url-btn" /></form>';
+					echo '<input type="text" name="url" value="' . $image_array[ 'url' ] . '" class="url" /><input type="hidden" name="submitted" value="true" /><input type="hidden" name="add_url" value="' . $i . '" class="add-url" /></form>';
 					echo '<form action="" method="post" class="delete">'; 
 
 					ob_start();

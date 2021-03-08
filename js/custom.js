@@ -38,4 +38,23 @@ jQuery( document ).ready( function( $ ) {
 		});
 	} );
 
+	// Update slide link on change
+	$( '#sortable' ).on( 'input', 'input.url', function( e ) {
+		e.preventDefault();
+
+		var imgId = $( this ).parent().parent().index();
+		var url = $( this ).val();
+
+		var data = {
+			action: 'hybrid_url_action',
+			id: imgId,
+			nonce: ajax_object.url_nonce, 
+			url: url
+		};
+
+		jQuery.post( ajax_object.ajax_url, data, function( response ) {
+			//console.log(response);
+		});
+	} );
+
 } );
