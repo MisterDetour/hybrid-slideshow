@@ -5,7 +5,7 @@
  * Plugin URI: http://www.hybridvigordesign.com/uncategorized/hybrid-slideshow
  * Description:  A simple jquery powered slideshow with drag and drop image ordering.
  * Author: David LaTour
- * Version: 2.1.0
+ * Version: 2.2.0
  * Author URI: http://www.hybridvigordesign.com
  * 
  * Copyright 2010 - by David LaTour
@@ -47,7 +47,7 @@ class Hybrid_Slideshow {
 
 		$this->path = plugin_dir_path( __FILE__ );
 		$this->dir = plugin_dir_url( __FILE__ );
-		$this->version = '1.0';
+		$this->version = '2.2';
 
 		// Actions
 		add_action( 'plugins_loaded', array( $this, 'update_data_structure' ) );
