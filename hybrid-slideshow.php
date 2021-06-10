@@ -861,9 +861,10 @@ class Hybrid_Slideshow {
 
 }
 
-/*	 
+/**
  *  Create the slideshow widget
- *	 **/
+ *	 
+ **/
 class hybrid_slideshow_widget extends WP_Widget {
 
 	function hybrid_slideshow_widget() {
