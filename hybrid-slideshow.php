@@ -69,7 +69,7 @@ class Hybrid_Slideshow {
 	}
 
 	/**
-     * Install
+	 * Install
 	 *
      **/
 	public function install() {
