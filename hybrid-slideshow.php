@@ -71,7 +71,7 @@ class Hybrid_Slideshow {
 	/**
 	 * Install
 	 *
-     **/
+	 **/
 	public function install() {
 
 		// Grab values
@@ -101,9 +101,9 @@ class Hybrid_Slideshow {
 	}
 
 	/**
-     *  Update old slideshow data structure in DB
+	 *  Update old slideshow data structure in DB
 	 *
-     **/
+	 **/
 	public function update_data_structure() {
 		$current_images = get_option( 'hybrid-slideshow-option-images' );
 		if ( $current_images ) {
@@ -173,9 +173,9 @@ class Hybrid_Slideshow {
 	}
 
 	/**
-     *  Register menu items
+	 *  Register menu items
 	 *
-     **/
+	 **/
 	public function register_menu_items() {
 		add_menu_page( 'Hybrid Slideshow', 'Slideshow', 'administrator', __FILE__ , array( $this, 'slideshow_page' ) );
 		add_submenu_page( __FILE__, 'Images', 'Images', 'administrator', __FILE__.'_hybrid_slideshow_images' , array( $this, 'images_page' ) );
@@ -183,9 +183,9 @@ class Hybrid_Slideshow {
 	}
 
 	/**
-     *  Register plugin settings
+	 *  Register plugin settings
 	 *
-     **/
+	 **/
 	public function plugin_options() {
 		register_setting( 'hybrid-slideshow-settings-group', 'hybrid-slideshow-option-width', 'intval' );
 		register_setting( 'hybrid-slideshow-settings-group', 'hybrid-slideshow-option-height', 'intval' );
@@ -196,9 +196,9 @@ class Hybrid_Slideshow {
 	}
 
 	/**
-     *  Load frontend assets
+	 *  Load frontend assets
 	 *
-     **/
+	 **/
 	public function scripts() {
 
 		wp_enqueue_script( 'jquery' );
@@ -206,9 +206,9 @@ class Hybrid_Slideshow {
 	}
 
 	/**
-     *  Load admin assets
+	 *  Load admin assets
 	 *
-     **/
+	 **/
 	public function admin_scripts() {
 
 		wp_enqueue_script( 'jquery' );
@@ -239,9 +239,9 @@ class Hybrid_Slideshow {
 	}
 
 	/**
-     *  Ajax callback - reorder slides
+	 *  Ajax callback - reorder slides
 	 *
-     **/
+	 **/
 	public function order_callback() {
 
 		$order_array = $_POST[ 'order' ];
@@ -262,9 +262,9 @@ class Hybrid_Slideshow {
 	}
 
 	/**
-     *  Ajax callback - delete slide
+	 *  Ajax callback - delete slide
 	 *
-     **/
+	 **/
 	public function delete_callback() {
 		if ( ! wp_verify_nonce( $_POST[ 'nonce'] , 'hybrid_delete_nonce' ) ) wp_die( 0 );
 
@@ -286,9 +286,9 @@ class Hybrid_Slideshow {
 	}
 
 	/**
-     *  Ajax callback - save url
+	 *  Ajax callback - save url
 	 *
-     **/
+	 **/
 	public function url_callback() {
 		if ( ! wp_verify_nonce( $_POST[ 'nonce'] , 'hybrid_url_nonce' ) ) {
 			wp_die( 'nonce didn\'t verify' );
@@ -305,9 +305,9 @@ class Hybrid_Slideshow {
 	}
 
 	/**
-     *  css & js output for admin head
+	 *  css & js output for admin head
 	 *
-     **/
+	 **/
 	public function admin_head() {
 		?>
 		<link href="<?php echo $this->dir; ?>/css/admin.css?v=1.0000004" rel="stylesheet" type="text/css" />
@@ -347,9 +347,9 @@ class Hybrid_Slideshow {
 	}
 
 	/**
-     *  Add image ajax callback
+	 *  Add image ajax callback
 	 *
-     **/
+	 **/
 	function image_callback() {
 		$img = intval( $_REQUEST[ 'image' ] );
 
@@ -388,9 +388,9 @@ class Hybrid_Slideshow {
 	}
 
 	/**
-     *  Shortcode output
+	 *  Shortcode output
 	 *
-     **/
+	 **/
 	public static function shortcode() { 
 		$current_images = get_option( 'hybrid-slideshow-option-images' );
 		if ( get_option( 'hybrid-slideshow-option-random' ) == 'true' ) { shuffle( $current_images ); }
@@ -416,17 +416,17 @@ class Hybrid_Slideshow {
 	}
 
 	/**
-     *  Register the slideshow widget
+	 *  Register the slideshow widget
 	 *
-     **/
+	 **/
 	function register_widgets() {
 		register_widget( 'hybrid_slideshow_widget' );
 	}
 
 	/**
-     *  Frontend slideshow header output
+	 *  Frontend slideshow header output
 	 *
-     **/
+	 **/
 	public function header_output() { ?>
 		<link href="<?php echo $this->dir; ?>/css/slideshow.css" rel="stylesheet" type="text/css" />
 		<style type="text/css">
@@ -458,9 +458,9 @@ class Hybrid_Slideshow {
 	}
 
 	/**
-     *  Delete image
+	 *  Delete image
 	 *
-     **/
+	 **/
 	public static function delete_image( $img, $update = false ) {
 		$path = wp_get_original_image_path( $img );
 
@@ -499,18 +499,18 @@ class Hybrid_Slideshow {
 	}
 
 	/**
-     *  Update slider width
+	 *  Update slider width
 	 *
-     **/
+	 **/
 	public function update_width( $new_value, $old_value, $option ) {
 		update_option( 'hybrid-slideshow-option-width-prev', $old_value );
 		return $new_value;
 	}
 
 	/**
-     *  Update slider height
+	 *  Update slider height
 	 *
-     **/
+	 **/
 	function update_height( $new_value, $old_value, $option ) {
 		update_option( 'hybrid-slideshow-option-height-prev', $old_value );
 
@@ -534,9 +534,9 @@ class Hybrid_Slideshow {
 	}
 
 	/**
-     *  Settings page output
+	 *  Settings page output
 	 *
-     **/
+	 **/
 	public function slideshow_page() { ?>
 		<div class="wrap">
 			<div id="icon-options-general" class="icon32"></div>
@@ -582,9 +582,9 @@ class Hybrid_Slideshow {
 	}
 
 	/**
-     *  Images page output
+	 *  Images page output
 	 *
-     **/
+	 **/
 	function images_page() {
 
 		// If form has been submitted then deal with uploading the image
@@ -709,9 +709,9 @@ class Hybrid_Slideshow {
 	}
 
 	/**
-     *  Check if there's a custom image size registered with same dimensions as slideshow size
+	 *  Check if there's a custom image size registered with same dimensions as slideshow size
 	 *
-     **/
+	 **/
 	public static function check_existing_size() {
 		global $_wp_additional_image_sizes; 
 
@@ -728,9 +728,9 @@ class Hybrid_Slideshow {
 	}
 
 	/**
-     *  This function handles all of the image processing
+	 *  This function handles all of the image processing
 	 *
-     **/
+	 **/
 	public static function process_image($file, $type) {
 		
 		//	Check that file is actually an image
@@ -781,9 +781,9 @@ class Hybrid_Slideshow {
 	}
 
 	/**
-     *  Get the custom slideshow image
+	 *  Get the custom slideshow image
 	 *
-     **/
+	 **/
 	public static function get_custom_image( $id, $format = 'html' ) {
 		$path = wp_get_original_image_path( $id );
 		$path_info = pathinfo( $path );
@@ -806,9 +806,9 @@ class Hybrid_Slideshow {
 	}
 
 	/**
-     *  Update image sizes
+	 *  Update image sizes
 	 *
-     **/
+	 **/
 	public static function update_images( $current_images, $new_width, $new_height ) {
 		
 		foreach ( $current_images as $img ) {
@@ -831,9 +831,9 @@ class Hybrid_Slideshow {
 	}
 
 	/**
-     *  Update image sizes I DONT THINK THIS IS BEING USED!!!!
+	 *  Update image sizes I DONT THINK THIS IS BEING USED!!!!
 	 *
-     **/
+	 **/
 	function update_image_sizes( $new_value, $old_value, $option ) {
 		if ( intval( $new_value ) !== intval( $old_value ) && ! empty( $new_value ) ) {
 			
@@ -861,10 +861,9 @@ class Hybrid_Slideshow {
 
 }
 
-/**
+/*	 
  *  Create the slideshow widget
- *
- **/
+ *	 **/
 class hybrid_slideshow_widget extends WP_Widget {
 
 	function hybrid_slideshow_widget() {
