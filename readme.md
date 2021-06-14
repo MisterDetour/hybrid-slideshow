@@ -1,1 +1,1 @@
-A WordPress image slideshow plugin
+# A WordPress image slideshow plugin
