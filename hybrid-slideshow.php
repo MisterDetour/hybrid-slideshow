@@ -308,7 +308,7 @@ class Hybrid_Slideshow {
 	 **/
 	public function admin_head() {
 		?>
-		<link href="<?php echo $this->dir; ?>/css/admin.css?v=1.0000004" rel="stylesheet" type="text/css" />
+		<link href="<?php echo $this->dir; ?>/css/admin.css?v=1.0000005" rel="stylesheet" type="text/css" />
 
 		<script type="text/javascript">
 			jQuery( document ).ready( function( $ ) {
@@ -674,18 +674,16 @@ class Hybrid_Slideshow {
 						ob_end_clean();
 						echo '<span class="handle">' . $icon . '</span>';
 
-						echo '<form action="" method="post" class="url">'; 
 						if ( function_exists( 'wp_nonce_field' ) ) { wp_nonce_field( 'hybrid_url_nonce' ); } 
-						echo '<input type="text" name="url" value="' . $image_array[ 'url' ] . '" class="url" /><input type="hidden" name="submitted" value="true" /><input type="hidden" name="add_url" value="' . $i . '" class="add-url" /></form>';
-						echo '<form action="" method="post" class="delete">'; 
-
+						echo '<div class="url-control"><input type="text" name="url" value="' . $image_array[ 'url' ] . '" class="url" /></div>';
+		
 						ob_start();
 						include( plugin_dir_path( __FILE__ ) . 'svg/trash.svg' );
 						$icon = ob_get_contents();
 						ob_end_clean();
 
 						if ( function_exists( 'wp_nonce_field' ) ) { wp_nonce_field( 'hybrid_delete_nonce' ); }
-						echo '<input type="hidden" name="submitted" value="true" /><input type="hidden" name="delete" value="' . $i . '" class="hidden delete-img" /><button class="trash">' . $icon . '</button></form>';
+						echo '<div class="delete"><button class="trash">' . $icon . '</button></div>';
 
 						echo '</li>';
 						$i++;

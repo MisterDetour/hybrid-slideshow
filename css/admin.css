@@ -39,23 +39,23 @@
 	padding: 0;
 	float: right;
 }
-#sortable form.delete {
+#sortable .delete {
 	width: 100px;
 	position: absolute;
 	right: 20px;
 	top: 5px;
 	text-align: center;
 }
-#sortable form.url {
+#sortable .url-control {
 	width: 300px;
 	position: absolute;
 	left: 280px;
 	top: 25px;
 }
-#sortable form.url input {
+#sortable .url-control input {
 	padding: 1px 3px;
 }
-#sortable form.url input {
+#sortable .url-control input {
 	margin: 0 5px;
 	float: none;
 }
