@@ -1,5 +1,30 @@
 jQuery( document ).ready( function( $ ) {
 
+	// Initiate sortable slide table
+	jQuery( "#sortable" ).sortable( {
+		handle : '.handle', 
+		update: function( event, ui ) {
+			// Update slideshow order in DB
+			var order = $( '#sortable' ).sortable( 'toArray' );
+
+			var urls = $( '#sortable li input.url' ).map( function () {
+				return this.value; 
+			} ).get();
+
+			// Strip strings from list item ids
+			for ( var i = 0; i < order.length; i++ ) {
+				order[ i ] = [ order[ i ].replace( 'listItem_', '' ), urls[ i ]  ];
+			}
+
+			var data = {
+				action: 'hybrid_special_action',
+				order: order
+			};
+
+			jQuery.post( ajaxurl, data );
+		}
+	} );
+
 	// Delete slide
 	$( '#sortable'  ).on( 'click', '.trash', function( e ) {
 		e.preventDefault();

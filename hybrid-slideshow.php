@@ -51,12 +51,11 @@ class Hybrid_Slideshow {
 		add_action( 'plugins_loaded', array( $this, 'update_data_structure' ) );
 		add_action( 'admin_menu', array( $this, 'register_menu_items' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'scripts' ) );
-		add_action( 'admin_print_scripts', array( $this, 'admin_scripts' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
 		add_action( 'wp_ajax_hybrid_special_action', array( $this, 'order_callback' ) );
 		add_action( 'wp_ajax_hybrid_delete_action', array( $this, 'delete_callback' ) );
 		add_action( 'wp_ajax_hybrid_url_action', array( $this, 'url_callback' ) );
 		add_action( 'wp_ajax_hybrid_add_image', array( $this, 'image_callback' ) );
-		add_action( 'admin_head', array( $this, 'admin_head' ) );
 		add_shortcode( 'hybrid_slideshow', array( $this, 'shortcode' ) );
 		add_action( 'widgets_init', array( $this, 'register_widgets' ) );
 		add_action( 'wp_head', array( $this, 'header_output' ) );
@@ -104,8 +103,10 @@ class Hybrid_Slideshow {
 	 **/
 	public function update_data_structure() {
 		$current_images = get_option( 'hybrid-slideshow-option-images' );
+
 		if ( $current_images ) {
 			if ( !is_array( $current_images[ 0 ] ) ) {
+				// Convert to newer array format
 				$new_order = array();
 				foreach( $current_images as $image ) {
 					$new_order[] = array(
@@ -118,6 +119,7 @@ class Hybrid_Slideshow {
 
 			} elseif ( !is_numeric( $current_images[ 0 ][ 'image' ] ) ) {
 
+				// Convert to new format, using media library to work with images
 				$new_order = array();
 				$upload_dir = wp_upload_dir()[ 'basedir' ]; 
 				$slideshow_width = get_option( 'hybrid-slideshow-option-width' );
@@ -175,8 +177,8 @@ class Hybrid_Slideshow {
 	 *
 	 **/
 	public function register_menu_items() {
-		add_menu_page( 'Hybrid Slideshow', 'Slideshow', 'administrator', __FILE__ , array( $this, 'slideshow_page' ) );
-		add_submenu_page( __FILE__, 'Images', 'Images', 'administrator', __FILE__.'_hybrid_slideshow_images' , array( $this, 'images_page' ) );
+		add_menu_page( 'Hybrid Slideshow', 'Slideshow', 'administrator', 'hybrid-slideshow' , array( $this, 'slideshow_page' ) );
+		add_submenu_page( 'hybrid-slideshow', 'Images', 'Images', 'administrator', 'hybrid-slideshow-images' , array( $this, 'images_page' ) );
 		add_action( 'admin_init', array( $this, 'plugin_options' ) );
 	}
 
@@ -207,7 +209,12 @@ class Hybrid_Slideshow {
 	 *  Load admin assets
 	 *
 	 **/
-	public function admin_scripts() {
+	public function admin_scripts( $hook ) {
+
+		// Display on slideshow images page only
+		if ( 'slideshow_page_hybrid-slideshow-images' != $hook ) {
+        	return;
+    	}
 
 		wp_enqueue_script( 'jquery' );
 		wp_enqueue_script( 'jquery-ui-core' );
@@ -233,6 +240,8 @@ class Hybrid_Slideshow {
 		
 		wp_localize_script( 'media-uploader', 'ajax_object', $params ); 
 		wp_enqueue_script( 'media-uploader' );
+
+		wp_enqueue_style( 'hybrid-slideshow-admin', plugins_url( 'css/admin.css' , __FILE__ ), array(), '1.0000005' );
 
 	}
 
@@ -264,7 +273,7 @@ class Hybrid_Slideshow {
 	 *
 	 **/
 	public function delete_callback() {
-		if ( ! wp_verify_nonce( $_POST[ 'nonce'] , 'hybrid_delete_nonce' ) ) wp_die( 0 );
+		if ( !wp_verify_nonce( $_POST[ 'nonce'] , 'hybrid_delete_nonce' ) ) wp_die( 0 );
 
 		$image_id = $_POST[ 'id' ];
 		$current_images = get_option( 'hybrid-slideshow-option-images' );
@@ -303,48 +312,6 @@ class Hybrid_Slideshow {
 	}
 
 	/**
-	 *  css & js output for admin head
-	 *
-	 **/
-	public function admin_head() {
-		?>
-		<link href="<?php echo $this->dir; ?>/css/admin.css?v=1.0000005" rel="stylesheet" type="text/css" />
-
-		<script type="text/javascript">
-			jQuery( document ).ready( function( $ ) {
-				jQuery( '#sortable li:odd' ).addClass( 'stripe' );
-				jQuery( "#sortable" ).sortable( {
-					handle : '.handle', 
-					update: function( event, ui ) {
-						jQuery( '#sortable li' ).removeClass( 'stripe' );
-						jQuery( '#sortable li:odd' ).addClass( 'stripe' );
-						var order = $( '#sortable' ).sortable( 'toArray' );
-
-						var urls = $( '#sortable li input.url' ).map( function () {
-							return this.value; 
-						} ).get();
-
-						// Strip strings from list item ids
-						for ( var i = 0; i < order.length; i++ ) {
-							order[ i ] = [ order[ i ].replace( 'listItem_', '' ), urls[ i ]  ];
-						}
-
-						var data = {
-							action: 'hybrid_special_action',
-							order: order
-						};
-
-						jQuery.post( ajaxurl, data, function( response ) {
-							console.log( response );
-						});
-					}
-				} );
-			} );
-		</script>
-		<?php
-	}
-
-	/**
 	 *  Add image ajax callback
 	 *
 	 **/
@@ -352,7 +319,7 @@ class Hybrid_Slideshow {
 		$img = intval( $_REQUEST[ 'image' ] );
 
 		// Retrieve current images from options database table
-		$current_images = get_option('hybrid-slideshow-option-images');	
+		$current_images = get_option( 'hybrid-slideshow-option-images' );	
 
 		$current_images[] = array( 'image' => $img, 'url' => '' );
 
@@ -672,9 +639,13 @@ class Hybrid_Slideshow {
 						include( plugin_dir_path( __FILE__ ) . 'svg/move.svg' );
 						$icon = ob_get_contents();
 						ob_end_clean();
+
 						echo '<span class="handle">' . $icon . '</span>';
 
-						if ( function_exists( 'wp_nonce_field' ) ) { wp_nonce_field( 'hybrid_url_nonce' ); } 
+						if ( function_exists( 'wp_nonce_field' ) ) { 
+							wp_nonce_field( 'hybrid_url_nonce' ); 
+						} 
+
 						echo '<div class="url-control"><input type="text" name="url" value="' . $image_array[ 'url' ] . '" class="url" /></div>';
 		
 						ob_start();
@@ -682,7 +653,10 @@ class Hybrid_Slideshow {
 						$icon = ob_get_contents();
 						ob_end_clean();
 
-						if ( function_exists( 'wp_nonce_field' ) ) { wp_nonce_field( 'hybrid_delete_nonce' ); }
+						if ( function_exists( 'wp_nonce_field' ) ) { 
+							wp_nonce_field( 'hybrid_delete_nonce' ); 
+						}
+
 						echo '<div class="delete"><button class="trash">' . $icon . '</button></div>';
 
 						echo '</li>';
@@ -727,7 +701,7 @@ class Hybrid_Slideshow {
 	 *  This function handles all of the image processing
 	 *
 	 **/
-	public static function process_image($file, $type) {
+	public static function process_image( $file, $type ) {
 		
 		//	Check that file is actually an image
 		if( strpos( $type, 'image' ) === FALSE ) {
@@ -873,7 +847,7 @@ class hybrid_slideshow_widget extends WP_Widget {
 		$this->WP_Widget( 'hybrid-slideshow', 'Hybrid Slideshow', $widget_ops );
 	}
 
-	function form($instance) {
+	function form( $instance ) {
 		
 		$defaults = array( 'title' => 'Slideshow' );
 		$instance = wp_parse_args( ( array ) $instance, $defaults );

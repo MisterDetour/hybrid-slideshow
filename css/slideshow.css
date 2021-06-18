@@ -18,7 +18,8 @@
 	height: 100%;
 	}
 	
-#hybrid-slideshow li#h-slide-1, #hybrid-slideshow li.active {
+#hybrid-slideshow li#h-slide-1, 
+#hybrid-slideshow li.active {
 	z-index: 2;
 	}
 	
