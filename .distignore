@@ -6,3 +6,7 @@
 .distignore
 .gitignore
 README.md
+
+/block/src/
+package-lock.json
+package.json

@@ -48,6 +48,7 @@ class Hybrid_Slideshow {
 		$this->version = '2.2';
 
 		// Actions
+		add_action( 'init', array( $this, 'block_init' )  );
 		add_action( 'plugins_loaded', array( $this, 'update_data_structure' ) );
 		add_action( 'admin_menu', array( $this, 'register_menu_items' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'scripts' ) );
@@ -243,6 +244,14 @@ class Hybrid_Slideshow {
 
 		wp_enqueue_style( 'hybrid-slideshow-admin', plugins_url( 'css/admin.css' , __FILE__ ), array(), '1.0000005' );
 
+	}
+
+	/**
+	 *  Register gutenberg block
+	 *
+	 **/
+	public function block_init() {
+		register_block_type_from_metadata( __DIR__ . '/block' );
 	}
 
 	/**
