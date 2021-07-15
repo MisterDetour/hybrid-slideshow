@@ -876,6 +876,14 @@ class hybrid_slideshow_widget extends WP_Widget {
 }
 
 /**
+ * Template function
+ *
+ */
+function hybrid_slideshow() {
+	return Hybrid_Slideshow::shortcode();
+}
+
+/**
  * Fire it up
  *
  */
