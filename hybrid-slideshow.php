@@ -251,7 +251,38 @@ class Hybrid_Slideshow {
 	 *
 	 **/
 	public function block_init() {
-		register_block_type_from_metadata( __DIR__ . '/block' );
+
+		$asset_file = include( plugin_dir_path( __FILE__ ) . 'block/build/index.asset.php');
+
+		// wp_register_style(
+		// 	'hsb-styles',
+		// 	plugins_url( 'block/build/style-index.css', __FILE__ ),
+		// 	array(),
+		// 	$asset_file[ 'version' ]
+		// );
+
+		wp_register_style(
+			'hsb-styles-editor',
+			plugins_url( 'css/slideshow.css', __FILE__ ),
+			array(),
+			$asset_file[ 'version' ]
+		);
+
+		wp_register_script(
+			'hsb-script',
+			plugins_url( 'block/build/index.js', __FILE__ ),
+			$asset_file[ 'dependencies' ],
+			$asset_file[ 'version' ]
+		);
+
+		register_block_type( 'hybrid-vigor/hybrid-slideshow', array(
+			'title'			  => 'Hybrid Slideshow',
+			'api_version' 	  => 2,
+			'editor_script'   => 'hsb-script',
+			'editor_style' 	  => 'hsb-styles-editor',
+			'style' 		  => 'hsb-styles', 
+			'render_callback' => array( $this, 'block_output' )
+		) );
 	}
 
 	/**
@@ -387,6 +418,14 @@ class Hybrid_Slideshow {
 			$output .= '</ul>';
 		}
 		return $output;
+	}
+
+	/**
+	 *  Gutenberg block output
+	 *
+	 **/
+	public static function block_output() {
+		return hybrid_slideshow::shortcode();
 	}
 
 	/**

@@ -12,6 +12,7 @@ import { __ } from '@wordpress/i18n';
  * @see https://developer.wordpress.org/block-editor/packages/packages-block-editor/#useBlockProps
  */
 import { useBlockProps } from '@wordpress/block-editor';
+import ServerSideRender from '@wordpress/server-side-render';
 
 /**
  * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
@@ -31,11 +32,6 @@ import './editor.scss';
  */
 export default function Edit() {
 	return (
-		<p { ...useBlockProps() }>
-			{ __(
-				'Hybrid Slideshow – hello from the editor!',
-				'hybrid-slideshow'
-			) }
-		</p>
+		<ServerSideRender block="hybrid-vigor/hybrid-slideshow" />
 	);
 }
