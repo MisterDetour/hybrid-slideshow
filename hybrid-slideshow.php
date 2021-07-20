@@ -60,6 +60,7 @@ class Hybrid_Slideshow {
 		add_shortcode( 'hybrid_slideshow', array( $this, 'shortcode' ) );
 		add_action( 'widgets_init', array( $this, 'register_widgets' ) );
 		add_action( 'wp_head', array( $this, 'header_output' ) );
+		add_action( 'admin_head', array( $this, 'header_output' ) );
 		add_action( 'delete_attachment', array( $this, 'delete_image' ), 10, 1 );
 		add_filter( 'pre_update_option_hybrid-slideshow-option-width', array( $this, 'update_width' ), 10, 3 );
 		add_filter( 'pre_update_option_hybrid-slideshow-option-height', array( $this, 'update_height' ), 11, 3 );
@@ -254,15 +255,8 @@ class Hybrid_Slideshow {
 
 		$asset_file = include( plugin_dir_path( __FILE__ ) . 'block/build/index.asset.php');
 
-		// wp_register_style(
-		// 	'hsb-styles',
-		// 	plugins_url( 'block/build/style-index.css', __FILE__ ),
-		// 	array(),
-		// 	$asset_file[ 'version' ]
-		// );
-
 		wp_register_style(
-			'hsb-styles-editor',
+			'hsb-styles',
 			plugins_url( 'css/slideshow.css', __FILE__ ),
 			array(),
 			$asset_file[ 'version' ]
@@ -277,7 +271,6 @@ class Hybrid_Slideshow {
 
 		register_block_type( 'hybrid-vigor/hybrid-slideshow', array(
 			'title'			  => 'Hybrid Slideshow',
-			'api_version' 	  => 2,
 			'editor_script'   => 'hsb-script',
 			'editor_style' 	  => 'hsb-styles-editor',
 			'style' 		  => 'hsb-styles', 
@@ -448,7 +441,7 @@ class Hybrid_Slideshow {
 			}
 		</style>
 		
-		<?php if ( get_option( 'hybrid-slideshow-option-javascript' ) != 'true' ) { ?>
+		<?php if ( !is_admin() && get_option( 'hybrid-slideshow-option-javascript' ) != 'true' ) { ?>
 			<script type="text/javascript">
 			jQuery(document).ready(function($) {
 				var numberOfPhotos = jQuery( '#hybrid-slideshow li' ).length;
