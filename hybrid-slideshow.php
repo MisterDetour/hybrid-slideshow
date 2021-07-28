@@ -336,7 +336,7 @@ class Hybrid_Slideshow {
 		$width = get_option( 'hybrid-slideshow-option-width' );
 		$height = get_option( 'hybrid-slideshow-option-height' );
 
-		$new_path = $upload_dir[ 'path' ] . '/' . $file_name . '-' . $width . 'x' . $height . '.' . $file_ext;
+		$new_path = $path_info[ 'dirname' ] . '/' . $file_name . '-' . $width . 'x' . $height . '.' . $file_ext;
 
 		if ( ! is_wp_error( $image ) ) {
 			$image->resize( $width, $height, true );
@@ -443,7 +443,7 @@ class Hybrid_Slideshow {
 			$height = get_option( 'hybrid-slideshow-option-height' );
 		}
 
-		$new_path = $upload_dir[ 'path' ] . '/' . $file_name . '-' . $width . 'x' . $height . '.' . $file_ext;
+		$new_path = $path_info[ 'dirname' ] . '/' . $file_name . '-' . $width . 'x' . $height . '.' . $file_ext;
 
 		if ( file_exists( $new_path ) ) wp_delete_file( $new_path );
 
@@ -766,12 +766,14 @@ class Hybrid_Slideshow {
 		$height = get_option( 'hybrid-slideshow-option-height' );
 
 		if ( $format === 'path' ) {
-			return $upload_dir[ 'path' ] . '/' . $file_name . '-' . $width . 'x' . $height . '.' . $file_ext;
+			return $path_info[ 'dirname' ] . '/' . $file_name . '-' . $width . 'x' . $height . '.' . $file_ext;
 		}
 
 		$alt = get_post_meta( $id, '_wp_attachment_image_alt', true );
-
-		$url = $upload_dir[ 'url' ] . '/' . $file_name . '-' . $width . 'x' . $height . '.' . $file_ext;
+		$orig_url = wp_get_original_image_url( $id );
+		
+		$url = str_replace( basename( $orig_url ), '', $orig_url) . $file_name . '-' . $width . 'x' . $height . '.' . $file_ext;
+		
 		return '<img src="' . esc_url( $url ) . '" alt="' . esc_attr( $alt ) . '">';
 	}
 
@@ -790,7 +792,7 @@ class Hybrid_Slideshow {
 			$upload_dir = wp_upload_dir(); 
 			$image = wp_get_image_editor( $path );
 
-			$new_path = $upload_dir[ 'path' ] . '/' . $file_name . '-' . $new_width . 'x' . $new_height . '.' . $file_ext;
+			$new_path = $path_info[ 'dirname' ]. '/' . $file_name . '-' . $new_width . 'x' . $new_height . '.' . $file_ext;
 
 			if ( ! is_wp_error( $image ) ) {
 				$image->resize( $new_width, $new_height, true );
