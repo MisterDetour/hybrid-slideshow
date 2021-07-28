@@ -5,7 +5,7 @@
  * Plugin URI: http://www.hybridvigordesign.com/uncategorized/hybrid-slideshow
  * Description:  A simple image slideshow.
  * Author: David LaTour
- * Version: 2.2.1
+ * Version: 2.2.2
  * Author URI: http://www.hybridvigordesign.com
  * 
  * Copyright 2010 - by David LaTour

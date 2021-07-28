@@ -4,7 +4,7 @@ Donate link: http://www.hybridvigordesign.com/plugins/hybrid-slideshow
 Tags: slideshow, images, carousel, rotator
 Requires at least: 2.8
 Tested up to: 5.7.1
-Stable tag: 2.2.1
+Stable tag: 2.2.2
 
 Hybrid Slideshow is a jQuery powered image slideshow with drag and drop image ordering. The slideshow can be inserted using a shortcode, widget, or php function call.
 
@@ -56,5 +56,3 @@ The markup produced is a simple html unordered list of images.
 = 1.7 =
 
 * Added basic responsiveness to slider
-
-
