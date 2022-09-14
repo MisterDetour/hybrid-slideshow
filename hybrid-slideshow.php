@@ -5,7 +5,7 @@
  * Plugin URI: http://www.hybridvigordesign.com/uncategorized/hybrid-slideshow
  * Description:  A simple image slideshow.
  * Author: David LaTour
- * Version: 2.2.2
+ * Version: 2.2.3
  * Author URI: http://www.hybridvigordesign.com
  * 
  * Copyright 2010 - by David LaTour
@@ -69,7 +69,7 @@ class Hybrid_Slideshow {
 	 * Install
 	 *
 	 **/
-	public function install() {
+	public static function install() {
 
 		// Grab values
 		$settings[ 'width' ] = get_option( 'hybrid-slideshow-option-width' );
@@ -839,14 +839,14 @@ class Hybrid_Slideshow {
  **/
 class hybrid_slideshow_widget extends WP_Widget {
 
-	function hybrid_slideshow_widget() {
+	function __construct() {
 
 		$widget_ops = array( 
 			'classname' => 'hybrid_slideshow_widget', 
 			'description' => 'Slideshow widget'
 		);
 
-		$this->WP_Widget( 'hybrid-slideshow', 'Hybrid Slideshow', $widget_ops );
+		parent::__construct( 'hybrid-slideshow', 'Hybrid Slideshow', $widget_ops );
 	}
 
 	function form( $instance ) {
